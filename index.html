@@ -1,0 +1,77 @@
+<!-- File: user.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Page</title>
+</head>
+
+<body>
+  <h1>Konten Terbaru</h1>
+
+  <ul id="konten-list"></ul>
+
+  <script>
+    // Mendengarkan event 'storage' saat ada perubahan pada localStorage
+    window.addEventListener('storage', function(event) {
+      if (event.key === 'konten') {
+        const savedKonten = localStorage.getItem('konten');
+        const kontenArray = JSON.parse(savedKonten) || [];
+
+        const kontenList = document.getElementById('konten-list');
+        kontenList.innerHTML = '';
+
+        kontenArray.forEach(function(konten) {
+          const listItem = document.createElement('li');
+
+          const judulElem = document.createElement('h3');
+          judulElem.textContent = konten.judul;
+
+          const gambar = document.createElement('img');
+          gambar.src = konten.gambarUrl;
+          gambar.alt = konten.judul;
+
+          const deskripsiElem = document.createElement('p');
+          deskripsiElem.textContent = konten.deskripsi;
+
+          listItem.appendChild(judulElem);
+          listItem.appendChild(gambar);
+          listItem.appendChild(deskripsiElem);
+          kontenList.appendChild(listItem);
+        });
+      }
+    });
+
+    // Mengecek dan mendapatkan konten dari localStorage saat halaman dimuat
+    window.addEventListener('DOMContentLoaded', function() {
+      const savedKonten = localStorage.getItem('konten');
+      const kontenArray = JSON.parse(savedKonten) || [];
+
+      const kontenList = document.getElementById('konten-list');
+      kontenList.innerHTML = '';
+
+      kontenArray.forEach(function(konten) {
+        const listItem = document.createElement('li');
+
+        const judulElem = document.createElement('h3');
+        judulElem.textContent = konten.judul;
+
+        const gambar = document.createElement('img');
+        gambar.src = konten.gambarUrl;
+        gambar.alt = konten.judul;
+
+        const deskripsiElem = document.createElement('p');
+        deskripsiElem.textContent = konten.deskripsi;
+
+        listItem.appendChild(judulElem);
+        listItem.appendChild(gambar);
+        listItem.appendChild(deskripsiElem);
+        kontenList.appendChild(listItem);
+      });
+    });
+  </script>
+</body>
+
+</html>
