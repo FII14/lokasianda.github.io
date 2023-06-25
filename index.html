@@ -1,77 +1,54 @@
-<!-- File: user.html -->
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>User Page</title>
-</head>
-
-<body>
-  <h1>Konten Terbaru</h1>
-
-  <ul id="konten-list"></ul>
-
+  <title>Akses Lokasi dan Simpan File</title>
   <script>
-    // Mendengarkan event 'storage' saat ada perubahan pada localStorage
-    window.addEventListener('storage', function(event) {
-      if (event.key === 'konten') {
-        const savedKonten = localStorage.getItem('konten');
-        const kontenArray = JSON.parse(savedKonten) || [];
-
-        const kontenList = document.getElementById('konten-list');
-        kontenList.innerHTML = '';
-
-        kontenArray.forEach(function(konten) {
-          const listItem = document.createElement('li');
-
-          const judulElem = document.createElement('h3');
-          judulElem.textContent = konten.judul;
-
-          const gambar = document.createElement('img');
-          gambar.src = konten.gambarUrl;
-          gambar.alt = konten.judul;
-
-          const deskripsiElem = document.createElement('p');
-          deskripsiElem.textContent = konten.deskripsi;
-
-          listItem.appendChild(judulElem);
-          listItem.appendChild(gambar);
-          listItem.appendChild(deskripsiElem);
-          kontenList.appendChild(listItem);
-        });
+    function getLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+      } else {
+        console.log('Geolocation tidak didukung di browser ini.');
       }
-    });
+    }
 
-    // Mengecek dan mendapatkan konten dari localStorage saat halaman dimuat
-    window.addEventListener('DOMContentLoaded', function() {
-      const savedKonten = localStorage.getItem('konten');
-      const kontenArray = JSON.parse(savedKonten) || [];
+    function showPosition(position) {
+      var latitude = position.coords.latitude;
+      var longitude = position.coords.longitude;
+      console.log('Latitude:', latitude);
+      console.log('Longitude:', longitude);
 
-      const kontenList = document.getElementById('konten-list');
-      kontenList.innerHTML = '';
+      // Kirim data lokasi ke server menggunakan XMLHttpRequest atau fetch API
+      var xhr = new XMLHttpRequest();
+      xhr.open('POST', 'save_location.php', true);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+          console.log('Lokasi disimpan ke file server.');
+        }
+      };
+      xhr.send('latitude=' + latitude + '&longitude=' + longitude);
+    }
 
-      kontenArray.forEach(function(konten) {
-        const listItem = document.createElement('li');
-
-        const judulElem = document.createElement('h3');
-        judulElem.textContent = konten.judul;
-
-        const gambar = document.createElement('img');
-        gambar.src = konten.gambarUrl;
-        gambar.alt = konten.judul;
-
-        const deskripsiElem = document.createElement('p');
-        deskripsiElem.textContent = konten.deskripsi;
-
-        listItem.appendChild(judulElem);
-        listItem.appendChild(gambar);
-        listItem.appendChild(deskripsiElem);
-        kontenList.appendChild(listItem);
-      });
-    });
+    function showError(error) {
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          console.log('Akses lokasi ditolak oleh pengguna.');
+          break;
+        case error.POSITION_UNAVAILABLE:
+          console.log('Informasi lokasi tidak tersedia.');
+          break;
+        case error.TIMEOUT:
+          console.log('Waktu permintaan lokasi habis.');
+          break;
+        case error.UNKNOWN_ERROR:
+          console.log('Terjadi kesalahan yang tidak diketahui.');
+          break;
+      }
+    }
   </script>
+</head>
+<body>
+  <h1>Akses Lokasi dan Simpan File</h1>
+  <button onclick="getLocation()">Dapatkan Lokasi dan Simpan File</button>
 </body>
-
 </html>
